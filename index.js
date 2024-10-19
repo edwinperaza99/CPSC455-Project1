@@ -16,7 +16,8 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cookieSession({
   secret: 'cpsc455-project1',
-  maxAge: 20 * 60 * 1000 // 20 minutes
+  maxAge: 20 * 60 * 1000, // 20 minutes
+  sameSite: 'Strict',
 }))
 app.use((req, res, next) => {
     res.set("Content-Security-Policy", "frame-ancestors 'none'");
