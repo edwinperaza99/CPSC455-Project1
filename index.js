@@ -18,6 +18,10 @@ app.use(cookieSession({
   secret: 'cpsc455-project1',
   maxAge: 20 * 60 * 1000 // 20 minutes
 }))
+app.use((req, res, next) => {
+    res.set("Content-Security-Policy", "frame-ancestors 'none'");
+    next();
+  });
 
 const db = new Database(':memory:', { verbose: console.log })
 db.pragma('foreign_keys = ON')
