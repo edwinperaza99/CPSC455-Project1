@@ -119,7 +119,7 @@ app.post('/logout', (req, res) => {
   res.render('login', { msg: 'logged out' })
 })
 
-app.get('/transfer/:from/:to/:amount', (req, res) => {
+app.post('/transfer', (req, res) => {
   const stmt = db.prepare(`
     SELECT 1
     FROM accounts
@@ -127,7 +127,7 @@ app.get('/transfer/:from/:to/:amount', (req, res) => {
       AND user_id = ?
   `)
 
-  const valid = stmt.get(req.params.from, req.session.user_id)
+  const valid = stmt.get(req.body.from, req.session.user_id)
   if (!valid) {
     res.status(401)
     res.json({ msg: 'invalid transfer' })
@@ -152,7 +152,7 @@ app.get('/transfer/:from/:to/:amount', (req, res) => {
     res.json({ from, to, amount })
   })
 
-  transfer(req.params.from, req.params.to, req.params.amount)
+  transfer(req.body.from, req.body.to, req.body.amount)
 })
 
 app.listen(PORT, () => {
