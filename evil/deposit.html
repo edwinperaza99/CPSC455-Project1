@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="https://unpkg.com/mvp.css">
+   <title>Vulnerable Bank</title>
+</head>
+<body>
+   <form method="POST" action="http://bank.127.0.0.1.nip.io:8080/deposit">
+       <header>
+           Deposit money for ProfAvery
+       </header>
+       <table>
+           <thead>
+               <tr>
+                   <th>Account ID</th>
+                   <th>Amount ($)</th>
+               </tr>
+           </thead>
+               <tr>
+                   <td>
+                       <label for="account">
+                           1
+                       </label>
+                       <input
+                           type="hidden" id="account"
+                           name="deposits[3][id]"
+                           value="3" />
+                   </td>
+                   <td>
+                       <input
+                           type="number"
+                           name="deposits[3][amount]"
+                           min="0" step="0.01"  />
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                       <label for="account">
+                           2
+                       </label>
+                       <input
+                           type="hidden" id="account"
+                           name="deposits[2][id]"
+                           value="2" />
+                   </td>
+                   <td>
+                       <input
+                           type="number"
+                           name="deposits[2][amount]"
+                           min="0" step="0.01"  />
+                   </td>
+               </tr>
+       </table>
+       <p>
+           <input type="submit" value="Deposit" />
+       </p>
+   </form>
+   <p>
+       <a href="/"><i>Return to balances</i></a>
+   </p>
+   <form method="POST" action="/logout">
+       <p>
+           <input type="submit" value="Logout" />
+       </p>
+   </form>
+</body>
+</html>
