@@ -7,8 +7,16 @@ const cookieSession = require('cookie-session')
 const bcrypt = require('bcrypt')
 const Database = require('better-sqlite3')
 
+// Anti CSRF fix
+const csrf = require('csurf')
+const cookieParser = require('cookie-parser')
+
 const PORT = 8080
 const app = express()
+
+// Anti CSRF fix
+const csrfProtection = csrf({cookie: true})
+app.use(cookieParser())
 
 app.set('view engine', 'ejs')
 app.use(morgan("dev"))
@@ -17,7 +25,7 @@ app.use(express.json())
 app.use(cookieSession({
   secret: 'cpsc455-project1',
   maxAge: 20 * 60 * 1000, // 20 minutes
-  sameSite: 'Strict',
+  sameSite: 'strict',
 }))
 app.use((req, res, next) => {
     res.set("Content-Security-Policy", "frame-ancestors 'none'");
@@ -81,7 +89,8 @@ app.get('/balance', (req, res) => {
   res.render('balance', { user, accounts })
 })
 
-app.get('/deposit', (req, res) => {
+// app.get('/deposit', (req, res) => {
+app.get('/deposit', csrfProtection ,(req, res) => {
   const userId = req.session.user_id
 
   if (!userId) {
@@ -95,10 +104,13 @@ app.get('/deposit', (req, res) => {
   stmt = db.prepare('SELECT id, balance FROM accounts WHERE user_id = ?')
   const accounts = stmt.all(userId)
 
-  res.render('deposit', { user, accounts })
+  // CSRF fix
+  const csrfToken = req.csrfToken()
+  res.render('deposit', { user, accounts, csrfToken })
 })
 
-app.post('/deposit', (req, res) => {
+// app.post('/deposit', (req, res) => {
+app.post('/deposit', csrfProtection ,(req, res) => {
   const userId = req.session.user_id
 
   if (!userId) {
@@ -117,6 +129,16 @@ app.post('/deposit', (req, res) => {
   }
 
   res.redirect('/balance')
+})
+
+// CSRF fix (custom error handling)
+app.use((err, req, res, next) => {
+  if (err.code === 'EBADCSRFTOKEN'){
+    
+    return res.render('login', {msg : "Tried to pull a fast one didn't you?"})
+  } 
+  
+  next(err)
 })
 
 app.post('/logout', (req, res) => {
