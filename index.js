@@ -25,8 +25,9 @@ app.use(express.json())
 app.use(cookieSession({
   secret: 'cpsc455-project1',
   maxAge: 20 * 60 * 1000, // 20 minutes
-  sameSite: 'strict',
+  // sameSite: 'strict',
 }))
+
 app.use((req, res, next) => {
     res.set("Content-Security-Policy", "frame-ancestors 'none'");
     next();
@@ -106,6 +107,7 @@ app.get('/deposit', csrfProtection ,(req, res) => {
 
   // CSRF fix
   const csrfToken = req.csrfToken()
+  
   res.render('deposit', { user, accounts, csrfToken })
 })
 
@@ -135,7 +137,7 @@ app.post('/deposit', csrfProtection ,(req, res) => {
 app.use((err, req, res, next) => {
   if (err.code === 'EBADCSRFTOKEN'){
     
-    return res.render('login', {msg : "Tried to pull a fast one didn't you?"})
+    return res.render('login', {msg : "why you do dis?"})
   } 
   
   next(err)
